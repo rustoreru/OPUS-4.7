@@ -6,6 +6,8 @@ import FilmPage from './pages/FilmPage';
 import EpisodesPage from './pages/EpisodesPage';
 import SettingsPage from './pages/SettingsPage';
 import AuthPage from './pages/AuthPage';
+import SearchPage from './pages/SearchPage';
+import WatchPage from './pages/WatchPage';
 import Preloader from './components/Preloader';
 
 export default function App() {
@@ -25,6 +27,8 @@ export default function App() {
       <Route path="/auth" element={<AuthPage />} />
       <Route element={<AppLayout />}>
         <Route index element={<HomePage />} />
+        <Route path="/search" element={<SearchPage />} />
+        <Route path="/watch/:source/:id" element={<WatchPage />} />
         <Route path="/film/:id" element={<FilmPage />} />
         <Route path="/film/:id/episodes" element={<EpisodesPage />} />
         <Route path="/settings" element={<SettingsPage />} />
