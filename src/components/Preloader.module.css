@@ -1,0 +1,58 @@
+.fullscreen {
+  position: fixed;
+  inset: 0;
+  background: var(--color-bg-base);
+  display: grid;
+  place-items: center;
+  z-index: 999;
+}
+
+.inline {
+  display: grid;
+  place-items: center;
+  padding: 48px 0;
+}
+
+.logoTv,
+.logoMobile {
+  display: grid;
+  grid-template-columns: repeat(2, 28px);
+  grid-template-rows: repeat(2, 28px);
+  gap: 4px;
+  animation: spin 1.2s ease-in-out infinite;
+}
+
+.logoMobile {
+  grid-template-columns: repeat(2, 21px);
+  grid-template-rows: repeat(2, 21px);
+}
+
+.cell {
+  background: #E7E7E7;
+  border-radius: 4px;
+  display: block;
+}
+
+.primary {
+  background: var(--color-primary);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
