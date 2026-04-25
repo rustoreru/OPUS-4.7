@@ -35,6 +35,7 @@ export default function WatchPage() {
   const [streamError, setStreamError] = useState<string | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
     setDetailsLoading(true);
     setDetailsError(null);
     const params =
@@ -44,6 +45,7 @@ export default function WatchPage() {
     api
       .details(source as SourceId, params)
       .then((d) => {
+        if (cancelled) return;
         setDetails(d);
         setActiveTranslator(d.translators[0] ?? null);
         if (d.episodes) {
@@ -55,14 +57,22 @@ export default function WatchPage() {
           }
         }
       })
-      .catch((e: unknown) =>
-        setDetailsError(e instanceof Error ? e.message : String(e)),
-      )
-      .finally(() => setDetailsLoading(false));
+      .catch((e: unknown) => {
+        if (cancelled) return;
+        setDetailsError(e instanceof Error ? e.message : String(e));
+      })
+      .finally(() => {
+        if (cancelled) return;
+        setDetailsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [source, id, rawUrl]);
 
   useEffect(() => {
     if (!details || !activeTranslator) return;
+    let cancelled = false;
     setStreamLoading(true);
     setStreamError(null);
     const isSeries = details.kind === "series";
@@ -75,11 +85,21 @@ export default function WatchPage() {
         season: isSeries ? activeSeason : undefined,
         episode: isSeries ? activeEpisode : undefined,
       })
-      .then(setBundle)
-      .catch((e: unknown) =>
-        setStreamError(e instanceof Error ? e.message : String(e)),
-      )
-      .finally(() => setStreamLoading(false));
+      .then((b) => {
+        if (cancelled) return;
+        setBundle(b);
+      })
+      .catch((e: unknown) => {
+        if (cancelled) return;
+        setStreamError(e instanceof Error ? e.message : String(e));
+      })
+      .finally(() => {
+        if (cancelled) return;
+        setStreamLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [details, activeTranslator, activeSeason, activeEpisode, source]);
 
   const currentSeasonEpisodes = useMemo<Episode[]>(() => {
