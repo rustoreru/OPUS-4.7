@@ -172,7 +172,11 @@ export default function WatchPage() {
                   className={`${styles.chip} ${
                     activeSeason === s ? styles.active : ""
                   }`}
-                  onClick={() => setActiveSeason(s)}
+                  onClick={() => {
+                    setActiveSeason(s);
+                    const eps = details.episodes?.[`s${s}`];
+                    if (eps?.length) setActiveEpisode(eps[0].episode);
+                  }}
                 >
                   {s} сезон
                 </button>
