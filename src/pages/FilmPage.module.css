@@ -1,0 +1,268 @@
+.page {
+  min-height: calc(100vh - 76px);
+  padding: 24px 56px 64px;
+  position: relative;
+}
+
+.hero {
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  padding: 24px 0 48px;
+}
+
+.heroInfo {
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.tagRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tag {
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tagAccent {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.title {
+  font-size: 72px;
+  font-weight: 800;
+  line-height: 1.05;
+  margin: 0;
+  letter-spacing: -0.01em;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+}
+
+.meta {
+  color: var(--color-text-secondary);
+  font-size: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.sep {
+  opacity: 0.55;
+}
+
+.description {
+  color: #e5e1dd;
+  font-size: 16px;
+  line-height: 1.7;
+  margin: 0;
+  max-width: 620px;
+}
+
+.ratings {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ratingBadge {
+  display: grid;
+  place-items: center;
+  padding: 4px 8px;
+  min-width: 40px;
+  height: 26px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.kp {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.imdb {
+  background: var(--color-rating-imdb);
+  color: #0f0f0f;
+}
+
+.ratingValue {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.primaryBtn,
+.secondaryBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 26px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 15px;
+  transition: filter 150ms ease, background 150ms ease, transform 150ms ease;
+}
+
+.primaryBtn {
+  background: var(--gradient-primary);
+  color: #fff;
+}
+
+.primaryBtn:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.secondaryBtn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--color-text-primary);
+}
+
+.secondaryBtn:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.sectionIndicator {
+  position: absolute;
+  right: -18px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sectionIndicator span {
+  display: block;
+  width: 2px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+
+.indicatorActive {
+  background: #fff !important;
+  height: 32px !important;
+}
+
+.recSection {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.recTitle {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.rail {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 10px 6px 32px;
+}
+
+.card {
+  flex-shrink: 0;
+  width: 180px;
+  position: relative;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.cardActive {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+  border-radius: 14px;
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.08);
+  transform: translateY(-6px);
+}
+
+.activeStar {
+  position: absolute;
+  top: -18px;
+  right: -10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(202, 102, 55, 0.4);
+}
+
+@media (max-width: 1280px) {
+  .page {
+    padding: 16px 32px 56px;
+  }
+  .title {
+    font-size: 56px;
+  }
+}
+
+@media (max-width: 900px) {
+  .page {
+    padding: 12px 16px 32px;
+  }
+  .hero {
+    padding: 4px 0 24px;
+    min-height: 0;
+  }
+  .title {
+    font-size: 34px;
+  }
+  .heroInfo {
+    gap: 14px;
+  }
+  .description {
+    font-size: 14px;
+  }
+  .primaryBtn,
+  .secondaryBtn {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+  .sectionIndicator {
+    display: none;
+  }
+  .card {
+    width: 130px;
+  }
+  .recTitle {
+    font-size: 20px;
+  }
+}
