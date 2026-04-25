@@ -1,3 +1,7 @@
+// Load .env BEFORE any module that reads process.env at import time
+// (notably http.ts which builds a ProxyAgent from HTTP_PROXY).
+import "dotenv/config";
+
 import express from "express";
 import cors from "cors";
 import * as hdrezka from "./parsers/hdrezka.js";
@@ -140,6 +144,21 @@ app.get("/api/source/:source/stream", async (req, res) => {
       const kpId = String(req.query.kp ?? "");
       if (!kpId) throw new Error("kp id required");
       res.json(await alloha.streamByKp(kpId));
+    } else if (source === "zetflix") {
+      // Zetflix is a Rezka clone — same /ajax/get_cdn_series payload + decoder.
+      const postId = String(req.query.postId ?? "");
+      const translatorId = String(req.query.translatorId ?? "");
+      const season = req.query.season ? Number(req.query.season) : undefined;
+      const episode = req.query.episode ? Number(req.query.episode) : undefined;
+      if (!postId || !translatorId)
+        throw new Error("postId & translatorId required");
+      const bundle = await hdrezka.stream({
+        postId,
+        translatorId,
+        season,
+        episode,
+      });
+      res.json({ ...bundle, source: "zetflix", sourceTitle: "Zetflix" });
     } else {
       throw new Error(`stream() not implemented for ${source}`);
     }
