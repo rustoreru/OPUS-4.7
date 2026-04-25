@@ -37,6 +37,21 @@ const HOSTS = [
   "https://zetflix.ws",
 ];
 
+/** Default Rezka-format CDN origin used when posting to /ajax/get_cdn_series/. */
+export const PRIMARY_HOST = HOSTS[0];
+
+export interface StreamArgs {
+  postId: string;
+  translatorId: string;
+  season?: number;
+  episode?: number;
+}
+
+export async function stream(args: StreamArgs) {
+  const bundle = await hdrezka.stream({ ...args, host: PRIMARY_HOST });
+  return { ...bundle, source: "zetflix" as const, sourceTitle: "Zetflix" };
+}
+
 export async function search(query: string): Promise<SearchResult[]> {
   const out: SearchResult[] = [];
   for (const host of HOSTS) {

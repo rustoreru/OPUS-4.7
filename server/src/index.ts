@@ -145,20 +145,16 @@ app.get("/api/source/:source/stream", async (req, res) => {
       if (!kpId) throw new Error("kp id required");
       res.json(await alloha.streamByKp(kpId));
     } else if (source === "zetflix") {
-      // Zetflix is a Rezka clone — same /ajax/get_cdn_series payload + decoder.
+      // Zetflix is a Rezka clone with a separate post-id namespace, so the
+      // CDN POST must target zetflix.online (zetflix.stream forwards the
+      // host to the shared Rezka decoder).
       const postId = String(req.query.postId ?? "");
       const translatorId = String(req.query.translatorId ?? "");
       const season = req.query.season ? Number(req.query.season) : undefined;
       const episode = req.query.episode ? Number(req.query.episode) : undefined;
       if (!postId || !translatorId)
         throw new Error("postId & translatorId required");
-      const bundle = await hdrezka.stream({
-        postId,
-        translatorId,
-        season,
-        episode,
-      });
-      res.json({ ...bundle, source: "zetflix", sourceTitle: "Zetflix" });
+      res.json(await zetflix.stream({ postId, translatorId, season, episode }));
     } else {
       throw new Error(`stream() not implemented for ${source}`);
     }

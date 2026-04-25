@@ -267,6 +267,12 @@ export interface StreamRequest {
   season?: number;
   episode?: number;
   favs?: string;
+  /**
+   * Origin host for the `/ajax/get_cdn_series/` POST. Defaults to the first
+   * HDRezka mirror; Zetflix and other Rezka clones must pass their own host
+   * because postId/translatorId are scoped to that site's database.
+   */
+  host?: string;
 }
 
 export async function stream(req: StreamRequest): Promise<StreamBundle> {
@@ -281,7 +287,7 @@ export async function stream(req: StreamRequest): Promise<StreamBundle> {
   if (req.episode) body.set("episode", String(req.episode));
   if (req.favs) body.set("favs", req.favs);
 
-  const host = HOSTS[0];
+  const host = req.host ?? HOSTS[0];
   const resp = await httpJson<{
     success: boolean;
     url?: string;
