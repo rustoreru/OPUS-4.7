@@ -99,17 +99,23 @@ export async function details(id: string): Promise<FilmDetails> {
   }
 
   if (post.player_links?.playlist) {
-    for (const tr of Object.keys(post.player_links.playlist)) {
-      translators.push({ id: tr, name: tr });
-      const seasonsObj = post.player_links.playlist[tr];
+    const trKeys = Object.keys(post.player_links.playlist);
+    for (const tr of trKeys) translators.push({ id: tr, name: tr });
+
+    // Episode lists are identical across translators — collect once from the
+    // first translator to avoid duplicate UI buttons.
+    const baseTr = trKeys[0];
+    if (baseTr) {
+      const seasonsObj = post.player_links.playlist[baseTr];
       for (const sKey of Object.keys(seasonsObj)) {
         const s = parseInt(sKey, 10);
-        const eps = Object.keys(seasonsObj[sKey]).map((eKey) => ({
-          season: s,
-          episode: parseInt(eKey, 10),
-          title: seasonsObj[sKey][eKey].title,
-        }));
-        (episodes[`s${s}`] ??= []).push(...eps);
+        episodes[`s${s}`] = Object.keys(seasonsObj[sKey])
+          .map((eKey) => ({
+            season: s,
+            episode: parseInt(eKey, 10),
+            title: seasonsObj[sKey][eKey].title,
+          }))
+          .sort((a, b) => a.episode - b.episode);
       }
     }
   }

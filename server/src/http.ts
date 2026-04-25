@@ -46,13 +46,29 @@ export async function http(url: string, opts: HttpOptions = {}): Promise<{
   }
 }
 
+/**
+ * Strip query-string entirely from a URL when building error messages so
+ * that secrets passed as query params (e.g. Alloha token, KP API key) never
+ * leak through `String(error)` to clients.
+ */
+export function sanitizeUrl(url: string): string {
+  try {
+    const u = new URL(url);
+    return `${u.origin}${u.pathname}`;
+  } catch {
+    return url.split("?")[0] ?? url;
+  }
+}
+
 export async function httpJson<T = unknown>(
   url: string,
   opts: HttpOptions = {},
 ): Promise<T> {
   const r = await http(url, opts);
   if (r.status >= 400) {
-    throw new Error(`${url} → HTTP ${r.status}: ${r.text.slice(0, 200)}`);
+    throw new Error(
+      `${sanitizeUrl(url)} → HTTP ${r.status}: ${r.text.slice(0, 200)}`,
+    );
   }
   return JSON.parse(r.text) as T;
 }

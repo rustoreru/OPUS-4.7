@@ -5,11 +5,24 @@ import * as filmix from "./parsers/filmix.js";
 import * as alloha from "./parsers/alloha.js";
 import * as zetflix from "./parsers/zetflix.js";
 import * as kp from "./services/kinopoisk.js";
+import { sanitizeUrl } from "./http.js";
 import type { SearchResult, SourceId } from "./types.js";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+/**
+ * Strip query strings (which may contain tokens) from any URLs that
+ * leaked into Error messages before forwarding to the client.
+ */
+function sanitizeError(e: unknown): string {
+  const msg = e instanceof Error ? e.message : String(e);
+  return msg.replace(
+    /https?:\/\/[^\s)'"]+/g,
+    (u) => sanitizeUrl(u),
+  );
+}
 
 app.get("/api/health", (_req, res) => {
   res.json({
@@ -25,7 +38,7 @@ app.get("/api/kp/popular", async (_req, res) => {
   try {
     res.json(await kp.popular());
   } catch (e) {
-    res.status(500).json({ error: String(e) });
+    res.status(500).json({ error: sanitizeError(e) });
   }
 });
 
@@ -33,7 +46,7 @@ app.get("/api/kp/series", async (_req, res) => {
   try {
     res.json(await kp.series());
   } catch (e) {
-    res.status(500).json({ error: String(e) });
+    res.status(500).json({ error: sanitizeError(e) });
   }
 });
 
@@ -41,7 +54,7 @@ app.get("/api/kp/movie/:id", async (req, res) => {
   try {
     res.json(await kp.byId(req.params.id));
   } catch (e) {
-    res.status(500).json({ error: String(e) });
+    res.status(500).json({ error: sanitizeError(e) });
   }
 });
 
@@ -51,7 +64,7 @@ app.get("/api/kp/search", async (req, res) => {
   try {
     res.json(await kp.search(q));
   } catch (e) {
-    res.status(500).json({ error: String(e) });
+    res.status(500).json({ error: sanitizeError(e) });
   }
 });
 
@@ -79,7 +92,17 @@ app.get("/api/source/:source/details", async (req, res) => {
     if (source === "hdrezka") {
       const url = String(req.query.url ?? "");
       if (!url) throw new Error("url required");
+      if (!hdrezka.isAllowedUrl(url)) {
+        throw new Error("url must be on an allowed HDRezka domain");
+      }
       res.json(await hdrezka.details(url));
+    } else if (source === "zetflix") {
+      const url = String(req.query.url ?? "");
+      if (!url) throw new Error("url required");
+      if (!zetflix.isAllowedUrl(url)) {
+        throw new Error("url must be on an allowed Zetflix domain");
+      }
+      res.json(await zetflix.details(url));
     } else if (source === "filmix") {
       const id = String(req.query.id ?? "");
       if (!id) throw new Error("id required");
@@ -88,7 +111,7 @@ app.get("/api/source/:source/details", async (req, res) => {
       throw new Error(`details() not implemented for ${source}`);
     }
   } catch (e) {
-    res.status(500).json({ error: String(e) });
+    res.status(500).json({ error: sanitizeError(e) });
   }
 });
 
@@ -121,7 +144,7 @@ app.get("/api/source/:source/stream", async (req, res) => {
       throw new Error(`stream() not implemented for ${source}`);
     }
   } catch (e) {
-    res.status(500).json({ error: String(e) });
+    res.status(500).json({ error: sanitizeError(e) });
   }
 });
 

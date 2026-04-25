@@ -2,11 +2,35 @@
  * Zetflix — HDRezka mirror with the same CDN API.
  *
  * Structure is nearly identical to HDRezka: /ajax/get_cdn_series/ endpoint,
- * same obfuscation scheme. We reuse the decoder from hdrezka.ts.
+ * same obfuscation scheme. We reuse details/stream from hdrezka.ts.
  */
 import * as cheerio from "cheerio";
 import { http } from "../http.js";
-import type { SearchResult } from "../types.js";
+import * as hdrezka from "./hdrezka.js";
+import type { FilmDetails, SearchResult } from "../types.js";
+
+const ALLOWED_HOSTS = new Set([
+  "zetflix.online",
+  "zetflix.ws",
+  "zetfix.online",
+]);
+
+export function isAllowedUrl(raw: string): boolean {
+  try {
+    const u = new URL(raw);
+    return ALLOWED_HOSTS.has(u.hostname);
+  } catch {
+    return false;
+  }
+}
+
+export async function details(url: string): Promise<FilmDetails> {
+  if (!isAllowedUrl(url)) {
+    throw new Error("zetflix: url is not on an allowed Zetflix domain");
+  }
+  const d = await hdrezka.fetchRezkaDetails(url);
+  return { ...d, source: "zetflix" };
+}
 
 const HOSTS = [
   "https://zetflix.online",

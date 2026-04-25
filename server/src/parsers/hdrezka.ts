@@ -29,6 +29,27 @@ const HOSTS = [
   "https://hdrezka.cm",
 ];
 
+const ALLOWED_HOSTS = new Set([
+  "hdrezka.ag",
+  "rezka.ag",
+  "hdrezka.cm",
+  "hdrezka.co",
+  "hdrezka.tv",
+]);
+
+export function isAllowedUrl(raw: string): boolean {
+  try {
+    const u = new URL(raw);
+    if (u.protocol !== "https:" && u.protocol !== "http:") return false;
+    return (
+      ALLOWED_HOSTS.has(u.hostname) ||
+      [...ALLOWED_HOSTS].some((h) => u.hostname.endsWith("." + h))
+    );
+  } catch {
+    return false;
+  }
+}
+
 async function firstAlive(path: string) {
   for (const host of HOSTS) {
     try {
@@ -77,7 +98,12 @@ export async function search(query: string): Promise<SearchResult[]> {
   return items;
 }
 
-export async function details(filmUrl: string): Promise<FilmDetails> {
+/**
+ * Internal: fetch + parse a Rezka-format film page without host validation.
+ * Used by both `details()` (with HDRezka allow-list) and the Zetflix wrapper
+ * (with its own allow-list) so each caller is responsible for SSRF defence.
+ */
+export async function fetchRezkaDetails(filmUrl: string): Promise<FilmDetails> {
   const r = await http(filmUrl);
   if (r.status >= 400) throw new Error(`HDRezka details: HTTP ${r.status}`);
   const $ = cheerio.load(r.text);
@@ -156,6 +182,13 @@ export async function details(filmUrl: string): Promise<FilmDetails> {
     url: filmUrl,
     kind,
   };
+}
+
+export async function details(filmUrl: string): Promise<FilmDetails> {
+  if (!isAllowedUrl(filmUrl)) {
+    throw new Error("hdrezka: url is not on an allowed HDRezka domain");
+  }
+  return fetchRezkaDetails(filmUrl);
 }
 
 export async function seasons(
