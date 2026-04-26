@@ -18,6 +18,7 @@ const ALLOWED_HOSTS = new Set([
 export function isAllowedUrl(raw: string): boolean {
   try {
     const u = new URL(raw);
+    if (u.protocol !== "https:" && u.protocol !== "http:") return false;
     return ALLOWED_HOSTS.has(u.hostname);
   } catch {
     return false;

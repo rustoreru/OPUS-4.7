@@ -162,6 +162,32 @@ export async function fetchRezkaDetails(filmUrl: string): Promise<FilmDetails> {
   const ratingKp = $(".b-post__info_rates.kp .bold").text().trim();
   const ratingImdb = $(".b-post__info_rates.imdb .bold").text().trim();
 
+  // For series, extract episodes inline from the already-loaded HTML so the
+  // client can render season/episode chips without a second round-trip.
+  // The episode markup is identical across translator tabs, so we collect
+  // from any translator (the first match per season/episode pair wins).
+  let episodes: Record<string, Episode[]> | undefined;
+  if (kind === "series") {
+    const collected: Record<string, Map<number, Episode>> = {};
+    $(
+      "#simple-episodes-tabs .b-simple_episodes__list .b-simple_episode__item",
+    ).each((_, el) => {
+      const $el = $(el);
+      const s = parseInt($el.attr("data-season_id") ?? "0", 10);
+      const e = parseInt($el.attr("data-episode_id") ?? "0", 10);
+      if (!s || !e) return;
+      const key = `s${s}`;
+      const bucket = (collected[key] ??= new Map<number, Episode>());
+      if (!bucket.has(e)) bucket.set(e, { season: s, episode: e });
+    });
+    if (Object.keys(collected).length > 0) {
+      episodes = {};
+      for (const [k, m] of Object.entries(collected)) {
+        episodes[k] = [...m.values()].sort((a, b) => a.episode - b.episode);
+      }
+    }
+  }
+
   return {
     source: "hdrezka",
     id: postId,
@@ -179,6 +205,7 @@ export async function fetchRezkaDetails(filmUrl: string): Promise<FilmDetails> {
     duration,
     ageRating,
     translators,
+    episodes,
     url: filmUrl,
     kind,
   };
