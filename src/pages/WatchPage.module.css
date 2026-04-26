@@ -1,0 +1,146 @@
+.page {
+  padding: 32px 48px 80px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .page {
+    padding: 16px 12px 120px;
+  }
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  margin-bottom: 20px;
+  font-size: 14px;
+  transition: color 0.15s;
+}
+
+.backLink:hover {
+  color: var(--color-primary);
+}
+
+.title {
+  font-size: 36px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.originalTitle {
+  color: var(--color-text-secondary);
+  font-size: 15px;
+  margin: 0 0 16px;
+}
+
+.meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+
+.meta span::after {
+  content: "·";
+  margin-left: 12px;
+  opacity: 0.5;
+}
+
+.meta span:last-child::after {
+  content: "";
+}
+
+.playerSection {
+  margin: 24px 0;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.controlGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.controlLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
+
+.chipRow {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  padding: 6px 12px;
+  background: var(--color-bg-surface);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--color-text-primary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.chip.active {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.description {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--color-text-primary);
+  max-width: 800px;
+  margin: 24px 0;
+}
+
+.loading,
+.error {
+  padding: 80px 0;
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.error {
+  color: #ff8a73;
+}
+
+.episodeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 8px;
+  max-width: 800px;
+}
+
+.episodeBtn {
+  padding: 10px 0;
+  background: var(--color-bg-surface);
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: var(--color-text-primary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.episodeBtn.active {
+  background: var(--color-primary);
+}
